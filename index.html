@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semáforo Contábil - 10 Lançamentos</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:linear-gradient(135deg,#e0f2fe,#f0fdf4,#fee2e2);
+    color:#0f172a;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:14px;
+  }
+  .app{
+    width:100%;
+    max-width:960px;
+    min-height:92vh;
+    background:#ffffff;
+    border:4px solid #0f172a;
+    border-radius:24px;
+    box-shadow:0 12px 30px rgba(15,23,42,.18);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  header{
+    background:#0f172a;
+    color:#fff;
+    padding:20px 18px;
+    text-align:center;
+  }
+  header h1{font-size:clamp(24px,4vw,42px);letter-spacing:.5px;margin-bottom:6px}
+  header p{font-size:clamp(16px,2.5vw,22px);color:#dbeafe;font-weight:bold}
+  .content{flex:1;padding:22px;display:flex;flex-direction:column;gap:18px}
+  .topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+  .badge{background:#dbeafe;color:#1e3a8a;border:2px solid #93c5fd;border-radius:999px;padding:9px 16px;font-weight:800;font-size:18px}
+  .progress{flex:1;height:16px;background:#e5e7eb;border-radius:999px;overflow:hidden;min-width:180px;border:1px solid #cbd5e1}
+  .progress span{display:block;height:100%;background:#16a34a;width:10%;transition:.3s}
+  .card{
+    border:3px solid #cbd5e1;
+    border-radius:22px;
+    padding:22px;
+    background:#f8fafc;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+  .question{
+    background:#fff;
+    border-left:12px solid #2563eb;
+    border-radius:18px;
+    padding:18px;
+  }
+  .question h2{font-size:clamp(22px,4vw,34px);color:#1e3a8a;margin-bottom:10px}
+  .question p{font-size:clamp(20px,3.4vw,30px);font-weight:800;line-height:1.35}
+  .semaforo{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+  }
+  .light{
+    border-radius:18px;
+    padding:18px;
+    min-height:116px;
+    border:3px solid transparent;
+  }
+  .green{background:#dcfce7;border-color:#16a34a}
+  .red{background:#fee2e2;border-color:#dc2626}
+  .yellow{background:#fef9c3;border-color:#ca8a04}
+  .blue{background:#dbeafe;border-color:#2563eb}
+  .light h3{font-size:clamp(19px,3vw,28px);margin-bottom:8px}
+  .light p{font-size:clamp(17px,2.7vw,24px);line-height:1.35;font-weight:700}
+  .launch{
+    background:#fff;
+    border:3px dashed #334155;
+    border-radius:18px;
+    padding:18px;
+  }
+  .launch h3{font-size:clamp(22px,3.2vw,30px);margin-bottom:10px;color:#14532d}
+  .entry{
+    font-size:clamp(20px,3.2vw,30px);
+    line-height:1.6;
+    font-weight:900;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .explain{
+    margin-top:12px;
+    background:#eef2ff;
+    border-left:8px solid #4338ca;
+    padding:14px;
+    border-radius:14px;
+    font-size:clamp(17px,2.5vw,22px);
+    line-height:1.4;
+    font-weight:700;
+  }
+  .controls{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+    padding:0 22px 22px;
+  }
+  button{
+    border:none;
+    border-radius:16px;
+    padding:14px 22px;
+    font-size:20px;
+    font-weight:900;
+    cursor:pointer;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(0,0,0,.18);
+  }
+  .prev{background:#475569}.next{background:#15803d}.restart{background:#b91c1c}
+  footer{
+    background:#0f172a;color:white;text-align:center;padding:13px;font-size:18px;font-weight:bold;
+  }
+  @media(max-width:700px){
+    body{padding:6px}.app{min-height:98vh;border-radius:16px;border-width:3px}.content{padding:14px}.semaforo{grid-template-columns:1fr}.controls{padding:0 14px 14px}button{flex:1;font-size:18px;padding:14px 10px}
+  }
+  @media print{
+    body{background:#fff;display:block;padding:0}.app{max-width:none;min-height:auto;border:none;box-shadow:none}.controls{display:none}.card{break-inside:avoid;page-break-inside:avoid}footer{position:fixed;bottom:0;width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🚦 SEMÁFORO CONTÁBIL</h1>
+    <p>10 lançamentos para aprender Débito e Crédito</p>
+  </header>
+
+  <main class="content">
+    <div class="topbar">
+      <div class="badge" id="contador">Lançamento 1 de 10</div>
+      <div class="progress"><span id="barra"></span></div>
+    </div>
+
+    <section class="card">
+      <div class="question">
+        <h2 id="titulo">Situação</h2>
+        <p id="situacao"></p>
+      </div>
+
+      <div class="semaforo">
+        <div class="light green">
+          <h3>🟢 AUMENTOU</h3>
+          <p id="aumentou"></p>
+        </div>
+        <div class="light red">
+          <h3>🔴 DIMINUIU / OBRIGAÇÃO</h3>
+          <p id="diminuiu"></p>
+        </div>
+        <div class="light blue">
+          <h3>🔵 DÉBITO</h3>
+          <p id="debito"></p>
+        </div>
+        <div class="light yellow">
+          <h3>🟡 CRÉDITO</h3>
+          <p id="credito"></p>
+        </div>
+      </div>
+
+      <div class="launch">
+        <h3>📘 Lançamento Contábil</h3>
+        <div class="entry" id="lancamento"></div>
+        <div class="explain" id="explicacao"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="controls">
+    <button class="prev" onclick="voltar()">⬅️ Voltar</button>
+    <button class="restart" onclick="reiniciar()">🔄 Reiniciar</button>
+    <button class="next" onclick="proximo()">Próximo ➡️</button>
+  </div>
+
+  <footer>Curso de Contabilidade Professor Moreira • WhatsApp (61) 98532-3574</footer>
+</div>
+
+<script>
+const dados = [
+  {
+    situacao:'A empresa recebeu R$ 5.000 de clientes em dinheiro.',
+    aumentou:'Caixa aumentou, porque entrou dinheiro na empresa.',
+    diminuiu:'Clientes diminuiu, porque o cliente deixou de dever.',
+    debito:'D – Caixa ........ R$ 5.000',
+    credito:'C – Clientes ..... R$ 5.000',
+    lancamento:'D – Caixa ....................... R$ 5.000<br>C – Clientes .................... R$ 5.000',
+    explicacao:'Entrou dinheiro? Caixa aumenta. Como Caixa é Ativo de natureza devedora, aumenta por débito.'
+  },
+  {
+    situacao:'A empresa pagou R$ 3.000 a fornecedores em dinheiro.',
+    aumentou:'A dívida com fornecedores diminuiu.',
+    diminuiu:'Caixa diminuiu, porque saiu dinheiro da empresa.',
+    debito:'D – Fornecedores ... R$ 3.000',
+    credito:'C – Caixa .......... R$ 3.000',
+    lancamento:'D – Fornecedores ................. R$ 3.000<br>C – Caixa ........................ R$ 3.000',
+    explicacao:'Saiu dinheiro? Caixa diminui. Como Caixa é Ativo, diminui por crédito.'
+  },
+  {
+    situacao:'A empresa comprou mercadorias à vista por R$ 8.000.',
+    aumentou:'Estoques aumentou, pois entraram mercadorias.',
+    diminuiu:'Caixa diminuiu, pois o pagamento foi à vista.',
+    debito:'D – Estoques ...... R$ 8.000',
+    credito:'C – Caixa ......... R$ 8.000',
+    lancamento:'D – Estoques ..................... R$ 8.000<br>C – Caixa ........................ R$ 8.000',
+    explicacao:'Entrou mercadoria no estoque e saiu dinheiro do caixa. Ativo que aumenta é débito; Ativo que diminui é crédito.'
+  },
+  {
+    situacao:'A empresa comprou mercadorias a prazo por R$ 12.000.',
+    aumentou:'Estoques aumentou, pois entraram mercadorias.',
+    diminuiu:'Fornecedores aumentou, pois nasceu uma obrigação a pagar.',
+    debito:'D – Estoques ............ R$ 12.000',
+    credito:'C – Fornecedores ....... R$ 12.000',
+    lancamento:'D – Estoques ..................... R$ 12.000<br>C – Fornecedores ................. R$ 12.000',
+    explicacao:'Não saiu dinheiro. A empresa ficou devendo. Passivo aumenta por crédito.'
+  },
+  {
+    situacao:'A empresa vendeu mercadorias à vista por R$ 15.000.',
+    aumentou:'Caixa aumentou, porque entrou dinheiro.',
+    diminuiu:'Receita de Vendas aumentou, pois houve venda.',
+    debito:'D – Caixa ............... R$ 15.000',
+    credito:'C – Receita de Vendas ... R$ 15.000',
+    lancamento:'D – Caixa ........................ R$ 15.000<br>C – Receita de Vendas ............ R$ 15.000',
+    explicacao:'Venda à vista: entrou dinheiro no caixa e nasceu receita. Receita aumenta por crédito.'
+  },
+  {
+    situacao:'A empresa vendeu mercadorias a prazo por R$ 20.000.',
+    aumentou:'Clientes aumentou, pois a empresa tem direito a receber.',
+    diminuiu:'Receita de Vendas aumentou, pois houve venda.',
+    debito:'D – Clientes ............ R$ 20.000',
+    credito:'C – Receita de Vendas ... R$ 20.000',
+    lancamento:'D – Clientes ..................... R$ 20.000<br>C – Receita de Vendas ............ R$ 20.000',
+    explicacao:'Não entrou dinheiro agora. Nasceu um direito contra o cliente. Direito é Ativo e aumenta por débito.'
+  },
+  {
+    situacao:'A empresa pagou salários no valor de R$ 4.000.',
+    aumentou:'Despesa de Salários aumentou.',
+    diminuiu:'Caixa diminuiu, porque saiu dinheiro.',
+    debito:'D – Despesa de Salários ... R$ 4.000',
+    credito:'C – Caixa ................ R$ 4.000',
+    lancamento:'D – Despesa de Salários .......... R$ 4.000<br>C – Caixa ........................ R$ 4.000',
+    explicacao:'Despesa aumenta por débito. Como houve pagamento, saiu dinheiro do caixa, que diminui por crédito.'
+  },
+  {
+    situacao:'A empresa recebeu empréstimo bancário de R$ 30.000 em sua conta.',
+    aumentou:'Caixa aumentou, porque entrou dinheiro.',
+    diminuiu:'Empréstimos a Pagar aumentou, pois nasceu uma dívida.',
+    debito:'D – Caixa ..................... R$ 30.000',
+    credito:'C – Empréstimos a Pagar ...... R$ 30.000',
+    lancamento:'D – Caixa ........................ R$ 30.000<br>C – Empréstimos a Pagar .......... R$ 30.000',
+    explicacao:'Entrou dinheiro, então debita Caixa. Mas esse dinheiro veio de empréstimo, então a dívida aumenta no Passivo por crédito.'
+  },
+  {
+    situacao:'O sócio integralizou capital em dinheiro no valor de R$ 50.000.',
+    aumentou:'Caixa aumentou, porque entrou dinheiro.',
+    diminuiu:'Capital Social aumentou no Patrimônio Líquido.',
+    debito:'D – Caixa ............ R$ 50.000',
+    credito:'C – Capital Social ... R$ 50.000',
+    lancamento:'D – Caixa ........................ R$ 50.000<br>C – Capital Social ................ R$ 50.000',
+    explicacao:'Entrou dinheiro na empresa: debita Caixa. O investimento do sócio aumenta o Patrimônio Líquido, que aumenta por crédito.'
+  },
+  {
+    situacao:'A empresa pagou aluguel do mês no valor de R$ 2.500.',
+    aumentou:'Despesa de Aluguel aumentou.',
+    diminuiu:'Caixa diminuiu, porque saiu dinheiro.',
+    debito:'D – Despesa de Aluguel ... R$ 2.500',
+    credito:'C – Caixa ............... R$ 2.500',
+    lancamento:'D – Despesa de Aluguel ........... R$ 2.500<br>C – Caixa ........................ R$ 2.500',
+    explicacao:'Despesa aumenta por débito. Como o aluguel foi pago, o caixa diminui por crédito.'
+  }
+];
+
+let atual = 0;
+function render(){
+  const d = dados[atual];
+  document.getElementById('contador').innerText = `Lançamento ${atual+1} de ${dados.length}`;
+  document.getElementById('barra').style.width = `${((atual+1)/dados.length)*100}%`;
+  document.getElementById('situacao').innerText = d.situacao;
+  document.getElementById('aumentou').innerText = d.aumentou;
+  document.getElementById('diminuiu').innerText = d.diminuiu;
+  document.getElementById('debito').innerText = d.debito;
+  document.getElementById('credito').innerText = d.credito;
+  document.getElementById('lancamento').innerHTML = d.lancamento;
+  document.getElementById('explicacao').innerText = d.explicacao;
+}
+function proximo(){ atual = (atual + 1) % dados.length; render(); }
+function voltar(){ atual = (atual - 1 + dados.length) % dados.length; render(); }
+function reiniciar(){ atual = 0; render(); }
+render();
+</script>
+</body>
+</html>
